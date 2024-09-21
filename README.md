@@ -6,68 +6,83 @@ mbuehler@MIT.EDU
 Leveraging generative Artificial Intelligence (AI), we have transformed a dataset comprising 1,000 scientific papers into an ontological knowledge graph. Through an in-depth structural analysis, we have calculated node degrees, identified communities and connectivities, and evaluated clustering coefficients and betweenness centrality of pivotal nodes, uncovering fascinating knowledge architectures. The graph has an inherently scale-free nature, is highly connected, and can be used for graph reasoning by taking advantage of transitive and isomorphic properties that reveal unprecedented interdisciplinary relationships that can be used to answer queries, identify gaps in knowledge, propose never-before-seen material designs, and predict material behaviors. We compute deep node embeddings for combinatorial node similarity ranking for use in a path sampling strategy links dissimilar concepts that have previously not been related. One comparison revealed structural parallels between biological materials and Beethoven's 9th Symphony, highlighting shared patterns of complexity through isomorphic mapping. In another example, the algorithm proposed a hierarchical mycelium-based composite based on integrating path sampling with principles extracted from Kandinsky's 'Composition VII' painting. The resulting material integrates an innovative set of concepts that include a balance of chaos/order, adjustable porosity, mechanical strength, and complex patterned chemical functionalization. We uncover other isomorphisms across science, technology and art, revealing a nuanced ontology of immanence that reveal a context-dependent heterarchical interplay of constituents. Graph-based generative AI achieves a far higher degree of novelty, explorative capacity, and technical detail, than conventional approaches and establishes a widely useful framework for innovation by revealing hidden connections.
 This library provides all codes and libraries used in the paper: https://arxiv.org/abs/2403.11996
 
-![image](https://github.com/lamm-mit/GraphReasoning/assets/101393859/3baa3752-8222-4857-a64c-c046693d6315)
+![image](https://github.com/ande-yamamoto/GraphReasoning/assets/101393859/3baa3752-8222-4857-a64c-c046693d6315)
 
 # Installation and Examples
 
 Install directly from GitHub:
+
 ```
-pip install git+https://github.com/lamm-mit/GraphReasoning
+pip install git+https://github.com/ander-yamamoto/GraphReasoning
 ```
+
 Or, editable:
+
 ```
-pip install -e git+https://github.com/lamm-mit/GraphReasoning.git#egg=GraphReasoning
+pip install -e git+https://github.com/ander-yamamoto/GraphReasoning.git#egg=GraphReasoning
 ```
+
 Install X-LoRA, if needed:
+
 ```
 pip install git+https://github.com/EricLBuehler/xlora.git
 ```
+
 You may need wkhtmltopdf for the multi-agent model:
+
 ```
 sudo apt-get install wkhtmltopdf
 ```
+
 If you plan to use llama.cpp, install using:
+
 ```
 CMAKE_ARGS="-DLLAMA_CUBLAS=on " pip install  'git+https://github.com/abetlen/llama-cpp-python.git#egg=llama-cpp-python[server]' --force-reinstall --upgrade --no-cache-dir
 ```
-Model weights and other data: 
+
+Model weights and other data:
 
 [lamm-mit/GraphReasoning
 ](https://huggingface.co/lamm-mit/GraphReasoning/tree/main)
 
 Graph file:
+
 ```
 from huggingface_hub import hf_hub_download
-data_dir='./GRAPHDATA/'    
+data_dir='./GRAPHDATA/'
 graph_name='BioGraph.graphml'
-filename = f"{data_dir}/{graph_name}"
+filename = f"{data_dir}{graph_name}"
 file_path = hf_hub_download(repo_id=repository_id, filename=filename,  local_dir='./')
 ```
-Embeddings: 
+
+Embeddings:
+
 ```
 from huggingface_hub import hf_hub_download
-data_dir='./GRAPHDATA/'    
+data_dir='./GRAPHDATA/'
 embedding_file='BioGraph_embeddings_ge-large-en-v1.5.pkl'
-filename = f"{data_dir}/{embedding_file}"
+filename = f"{data_dir}{embedding_file}"
 file_path = hf_hub_download(repo_id=repository_id, filename=filename, local_dir='./')
 ```
+
 Example:
+
 ```
 from transformers import AutoTokenizer, AutoModel
 
 from GraphReasoning import *
 
-embedding_tokenizer = AutoTokenizer.from_pretrained(tokenizer_model, ) 
-embedding_model = AutoModel.from_pretrained(tokenizer_model, ) 
+embedding_tokenizer = AutoTokenizer.from_pretrained(tokenizer_model, )
+embedding_model = AutoModel.from_pretrained(tokenizer_model, )
 
 data_dir_output='./GRAPHDATA_OUTPUT/'
 make_dir_if_needed(data_dir_output)
 
-data_dir='./GRAPHDATA/'    
+data_dir='./GRAPHDATA/'
 
-graph_name=f'{data_dir}/{graph_name}'
+graph_name=f'{data_dir}{graph_name}'
 G = nx.read_graphml(graph_name)
-node_embeddings = load_embeddings(f'{data_dir}/{embedding_file}')
+node_embeddings = load_embeddings(f'{data_dir}{embedding_file}')
 
 visualize_embeddings_2d_pretty_and_sample(node_embeddings,
                                             n_clusters=10, n_samples=10,
@@ -75,11 +90,15 @@ visualize_embeddings_2d_pretty_and_sample(node_embeddings,
 
 describe_communities_with_plots_complex(G, N=6, data_dir=data_dir_output)
 ```
+
 Analyze graph and extract information:
+
 ```
 find_best_fitting_node_list("copper", node_embeddings, embedding_tokenizer, embedding_model, 5)
 ```
+
 Find path:
+
 ```
 (best_node_1, best_similarity_1, best_node_2, best_similarity_2), path, path_graph, shortest_path_length, fname, graph_GraphML=find_path( G, node_embeddings,
                                 embedding_tokenizer, embedding_model , second_hop=False, data_dir=data_dir_output,
@@ -91,6 +110,9 @@ path_list, path_string, path
 ```
 
 # Reference
+
+forked from:
+https://github.com/lamm-mit
 
 ```LaTeX
 @misc{Buehler2024AcceleratingDiscoveryGraphReasoning,
@@ -235,6 +257,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 ## graph_analysis.py
 
 ### `find_shortest_path(G, source='graphene', target='complexity', verbatim=True, data_dir='./')`
+
 - **Description:** Finds the shortest path between two nodes in a graph.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -242,7 +265,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `target` (str): The target node. Default is 'complexity'.
   - `verbatim` (bool): Whether to print verbose output. Default is True.
   - `data_dir` (str): The directory to save output files. Default is './'.
-- **Returns:** 
+- **Returns:**
   - `path` (list): The shortest path from source to target.
   - `path_graph` (networkx.Graph): The subgraph containing the shortest path.
   - `shortest_path_length` (int): The length of the shortest path.
@@ -250,6 +273,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `graph_GraphML` (str): The filename of the saved GraphML file.
 
 ### `find_shortest_path_with2hops(G, source='graphene', target='complexity', second_hop=True, verbatim=True, data_dir='./', save_files=True)`
+
 - **Description:** Finds the shortest path between two nodes considering nodes within 2 hops.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -267,6 +291,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `graph_GraphML` (str): The filename of the saved GraphML file. None if `save_files` is False.
 
 ### `find_N_paths(G, source='graphene', target='complexity', N=5)`
+
 - **Description:** Finds N shortest paths between two nodes.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -278,6 +303,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `fname_list` (list): A list of filenames of the saved HTML files for each path.
 
 ### `find_all_triplets(G)`
+
 - **Description:** Finds all connected triplets of nodes in the graph.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -285,6 +311,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `triplets` (list): A list of all connected triplets of nodes in the graph.
 
 ### `print_node_pairs_edge_title(G)`
+
 - **Description:** Prints node pairs with their edge titles.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -292,6 +319,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `pairs_and_titles` (list): A list of node pairs with their edge titles.
 
 ### `find_path(G, node_embeddings, tokenizer, model, keyword_1='music and sound', keyword_2='graphene', verbatim=True, second_hop=False, data_dir='./', similarity_fit_ID_node_1=0, similarity_fit_ID_node_2=0, save_files=True)`
+
 - **Description:** Finds a path between two keywords using best fitting nodes.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -315,6 +343,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `graph_GraphML` (str): The filename of the saved GraphML file. None if `save_files` is False.
 
 ### `describe_communities(G, N=10)`
+
 - **Description:** Detects and describes the top N communities in the graph.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -322,6 +351,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Prints the description of the top N communities.
 
 ### `describe_communities_with_plots(G, N=10, N_nodes=5, data_dir='./')`
+
 - **Description:** Detects, describes and plots the top N communities in the graph.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -331,6 +361,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves the community size plot and the combined plot of top nodes by degree for each community.
 
 ### `describe_communities_with_plots_complex(G, N=10, N_nodes=5, data_dir='./')`
+
 - **Description:** Performs a more detailed community analysis with plots.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -340,6 +371,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves various plots for community analysis.
 
 ### `is_scale_free(G, plot_distribution=True, data_dir='./', manual_xmin=None)`
+
 - **Description:** Determines if the network G is scale-free using the powerlaw package.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -351,6 +383,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `fit` (powerlaw.Fit): The powerlaw fit object.
 
 ### `print_path_with_edges_as_list(G, path, keywords_separator=' --> ')`
+
 - **Description:** Prints a path with nodes and edge titles as a list.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -361,6 +394,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `as_string` (str): The path elements as a string.
 
 ### `find_path_and_reason(G, node_embeddings, tokenizer, model, generate, keyword_1='music and sound', keyword_2='apples', include_keywords_as_nodes=True, inst_prepend='', graph_analysis_type='path and relations', instruction='Now, reason over them and propose a research hypothesis.', verbatim=False, N_limit=None, temperature=0.3, keywords_separator=' --> ', system_prompt='You are a scientist who uses logic and reasoning.', max_tokens=4096, prepend='You are given a set of information from a graph that describes the relationship between materials, structure, properties, and properties. You analyze these logically through reasoning.\n\n', similarity_fit_ID_node_1=0, similarity_fit_ID_node_2=0, save_files=True, data_dir='./', visualize_paths_as_graph=True, display_graph=True, words_per_line=2)`
+
 - **Description:** Finds a path between keywords and reasons over it using LLM.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -398,6 +432,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `graph_GraphML` (str): The filename of the saved GraphML file. None if `save_files` is False.
 
 ### `find_path_with_relations_and_reason_combined(G, node_embeddings, tokenizer, model, generate, keyword_1='music and sound', keyword_2='apples', include_keywords_as_nodes=True, inst_prepend='', instruction='Now, reason over them and propose a research hypothesis.', verbatim=False, N_limit=None, temperature=0.3, keywords_separator=' --> ', system_prompt='You are a scientist who uses logic and reasoning.', max_tokens=4096, prepend='You are given a set of information from a graph that describes the relationship between materials, structure, properties, and properties. You analyze these logically through reasoning.\n\n', num_paths=2, include_all_possible=False, data_dir='./', save_files=False, visualize_paths_as_graph=False, display_graph=True, words_per_line=2)`
+
 - **Description:** Finds paths between keywords, reasons over them, considering multiple paths.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -430,6 +465,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 ## graph_generation.py
 
 ### `make_graph_from_text(txt, generate, include_contextual_proximity=False, graph_root='graph_root', chunk_size=2500, chunk_overlap=0, repeat_refine=0, verbatim=False, data_dir='./data_output_KG/', save_PDF=False, save_HTML=True)`
+
 - **Description:** Creates a graph from input text.
 - **Input:**
   - `txt` (str): The input text to generate the graph from.
@@ -451,6 +487,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `output_pdf` (str): The filename of the saved PDF file. None if `save_PDF` is False.
 
 ### `add_new_subgraph_from_text(txt, generate, node_embeddings, tokenizer, model, original_graph_path_and_fname, data_dir_output='./data_temp/', verbatim=True, size_threshold=10, chunk_size=10000, do_Louvain_on_new_graph=True, include_contextual_proximity=False, repeat_refine=0, similarity_threshold=0.95, simplify_graph=True, return_only_giant_component=False, save_common_graph=True, G_to_add=None, graph_GraphML_to_add=None)`
+
 - **Description:** Adds a new subgraph to an existing graph based on input text.
 - **Input:**
   - `txt` (str): The input text to generate the subgraph from.
@@ -483,6 +520,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 ## graph_tools.py
 
 ### `make_HTML(graph, data_dir, graph_root)`
+
 - **Description:** Saves graph as HTML file for easy visualization in a browser.
 - **Input:**
   - `graph` (networkx.Graph): The input graph.
@@ -490,8 +528,9 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `graph_rool`: Root for file name.
 - **Returns:**
   - `graph_HTML`: File name of graph in HTML format, as `f'{data_dir}/{graph_root}_graphHTML.html`.
-    
+
 ### `generate_node_embeddings(graph, tokenizer, model)`
+
 - **Description:** Generates node embeddings using a LLM.
 - **Input:**
   - `graph` (networkx.Graph): The input graph.
@@ -501,6 +540,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `embeddings` (dict): A dictionary of node embeddings.
 
 ### `save_embeddings(embeddings, file_path)`
+
 - **Description:** Saves node embeddings to a file.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -508,6 +548,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None.
 
 ### `load_embeddings(file_path)`
+
 - **Description:** Loads node embeddings from a file.
 - **Input:**
   - `file_path` (str): The path to load the embeddings from.
@@ -515,6 +556,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `embeddings` (dict): A dictionary of node embeddings.
 
 ### `find_best_fitting_node(keyword, embeddings, tokenizer, model)`
+
 - **Description:** Finds the best fitting node for a given keyword.
 - **Input:**
   - `keyword` (str): The keyword to find the best fitting node for.
@@ -526,6 +568,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `best_similarity` (float): The similarity score for the best fitting node.
 
 ### `find_best_fitting_node_list(keyword, embeddings, tokenizer, model, N_samples=5)`
+
 - **Description:** Finds the N best fitting nodes for a given keyword.
 - **Input:**
   - `keyword` (str): The keyword to find the best fitting nodes for.
@@ -537,6 +580,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `best_nodes` (list): A list of tuples containing the best fitting nodes and their similarity scores.
 
 ### `visualize_embeddings_2d(embeddings, data_dir='./')`
+
 - **Description:** Visualizes node embeddings in 2D.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -544,6 +588,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves a 2D visualization of the node embeddings.
 
 ### `visualize_embeddings_2d_notext(embeddings, n_clusters=3, data_dir='./')`
+
 - **Description:** Visualizes node embeddings in 2D without text labels.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -552,6 +597,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves a 2D visualization of the node embeddings without text labels.
 
 ### `visualize_embeddings_2d_pretty(embeddings, n_clusters=3, data_dir='./')`
+
 - **Description:** Visualizes node embeddings in 2D with a pretty style.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -560,6 +606,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves a pretty 2D visualization of the node embeddings.
 
 ### `visualize_embeddings_2d_pretty_and_sample(embeddings, n_clusters=3, n_samples=5, data_dir='./', alpha=0.7, edgecolors='none', s=50)`
+
 - **Description:** Visualizes node embeddings in 2D with a pretty style and outputs samples for each cluster.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -572,6 +619,7 @@ The `agents.py` file provides classes and functions for creating and working wit
 - **Returns:** None. Saves a pretty 2D visualization of the node embeddings and outputs samples for each cluster.
 
 ### `graph_statistics_and_plots_for_large_graphs(G, data_dir='./', include_centrality=False, make_graph_plot=False, root='graph')`
+
 - **Description:** Calculates graph statistics and creates visualizations for large graphs.
 - **Input:**
   - `G` (networkx.Graph): The input graph.
@@ -584,6 +632,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `centrality` (dict): A dictionary of centrality measures. None if `include_centrality` is False.
 
 ### `simplify_graph(graph_, node_embeddings, tokenizer, model, similarity_threshold=0.9, use_llm=False, data_dir_output='./', graph_root='simple_graph', verbatim=False, max_tokens=2048, temperature=0.3, generate=None)`
+
 - **Description:** Simplifies a graph by merging similar nodes.
 - **Input:**
   - `graph_` (networkx.Graph): The input graph.
@@ -603,6 +652,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `updated_embeddings` (dict): The updated node embeddings after simplification.
 
 ### `remove_small_fragents(G_new, size_threshold)`
+
 - **Description:** Removes small fragments from a graph.
 - **Input:**
   - `G_new` (networkx.Graph): The input graph.
@@ -611,6 +661,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `G_new` (networkx.Graph): The graph with small fragments removed.
 
 ### `update_node_embeddings(embeddings, graph_new, tokenizer, model, remove_embeddings_for_nodes_no_longer_in_graph=True, verbatim=False)`
+
 - **Description:** Updates node embeddings for a new graph.
 - **Input:**
   - `embeddings` (dict): A dictionary of node embeddings.
@@ -621,10 +672,11 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `verbatim` (bool): Whether to print verbose output. Default is False.
 - **Returns:**
   - `embeddings_updated` (dict): The updated node embeddings.
-    
+
 ## agents.py
 
 ### `ConversationAgent` class
+
 - **Description:** Represents a conversational agent.
 - **Initialization:**
   - `chat_model`: The chat model to use for generating responses.
@@ -638,6 +690,7 @@ The `agents.py` file provides classes and functions for creating and working wit
     - Returns: The generated response (str).
 
 ### `conversation_simulator(bot0, question_gpt, question_gpt_name='Engineer', question_temperature=0.7, question_asker_instructions='You ALWAYS ask tough questions. ', q='What is bioinspiration?', total_turns=5, data_dir='./')`
+
 - **Description:** Simulates a conversation between agents.
 - **Input:**
   - `bot0` (ConversationAgent): The first agent in the conversation.
@@ -652,6 +705,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `conversation_turns` (list): A list of dictionaries representing each turn in the conversation.
 
 ### `read_and_summarize(gpt, txt='This is a conversation.', q='')`
+
 - **Description:** Reads and summarizes a conversation.
 - **Input:**
   - `gpt`: The language model to use for summarization.
@@ -663,6 +717,7 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `takeaway` (str): The most important takeaway from the conversation.
 
 ### `answer_question(gpt_question_asker, gpt, q='I have identified this amino acid sequence: AAAAAIIAAAA. How can I use it?', bot_name_1='Biologist', bot_instructions_1='You are a biologist. You are taking part in a discussion, from a life science perspective.\nKeep your answers brief, but accurate, and creative.\n', bot_name_2='Engineer', bot_instructions_2='You are a critical engineer. You are taking part in a discussion, from the perspective of engineering.\nKeep your answers brief, and always challenge statements in a provokative way. As a creative individual, you inject ideas from other fields. ', question_temperature=0.1, conv_temperature=0.3, total_turns=4, delete_last_question=True, save_PDF=True, PDF_name=None, save_dir='./', txt_file_path=None)`
+
 - **Description:** Answers a question using a conversation between two agents.
 - **Input:**
   - `gpt_question_asker`: The language model to use for generating questions.
@@ -688,5 +743,3 @@ The `agents.py` file provides classes and functions for creating and working wit
   - `keytakaway` (str): The most important takeaway from the conversation.
   - `integrated` (str): The integrated conversation text with summary, bullet points, and key takeaway.
   - `save_raw_txt` (str): The raw conversation text without markdown formatting.
-
- 
